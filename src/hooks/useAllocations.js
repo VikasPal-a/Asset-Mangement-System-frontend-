@@ -46,7 +46,9 @@ export const useAllocations = () => {
 
   return {
     allocations,
+
     loading,
+
     assignAsset,
     returnAsset,
     refetch: fetchAllocations,

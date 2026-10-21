@@ -6,8 +6,7 @@ export const dashboardService = {
     const assets = assetService.getAssets();
     return {
       total: assets.length,
-      available: assets.filter((a) => a.status === ASSET_STATUS.AVAILABLE)
-        .length,
+      available: assets.filter((a) => a.status === ASSET_STATUS.InStock).length,
       assigned: assets.filter((a) => a.status === ASSET_STATUS.ASSIGNED).length,
       maintenance: assets.filter((a) => a.status === ASSET_STATUS.MAINTENANCE)
         .length,

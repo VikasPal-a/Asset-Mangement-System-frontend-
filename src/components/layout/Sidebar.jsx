@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BRAND_NAME } from "../../utils/constants";
 import { NavLink } from "react-router-dom";
 import {
@@ -10,11 +10,18 @@ import {
   ListSortDescending,
   IdCardLanyard,
   ToolCase,
+  ShelvingUnit,
+  MapPinned,
+  ShoppingCart,
+  ShoppingBag,
+  Summary,
+  ChevronDown,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 
 export const Sidebar = () => {
   const { user, logout } = useAuth();
+  const [purchaseOpen, setPurchaseOpen] = useState(false);
 
   const links = [
     {
@@ -22,6 +29,41 @@ export const Sidebar = () => {
       to: "/dashboard",
       icon: LayoutDashboard,
     },
+    {
+      name: "Category",
+      to: "/category",
+      icon: ListSortDescending,
+    },
+    {
+      name: "Vendor Creation",
+      to: "/Vendor",
+      icon: ShelvingUnit,
+    },
+    {
+      name: "Location",
+      to: "/Location",
+      icon: MapPinned,
+    },
+    {
+      name: "Item Creation",
+      to: "/Item",
+      icon: ShoppingCart,
+    },
+    {
+      name: "Purchase Transaction",
+      icon: ShoppingBag,
+      children: [
+        {
+          name: "Purchase Bills Entry",
+          to: "/purchase/entry",
+        },
+        {
+          name: "Purchase List",
+          to: "/purchase/list",
+        },
+      ],
+    },
+
     {
       name: "Asset Inventory",
       to: "/assets",
@@ -33,20 +75,40 @@ export const Sidebar = () => {
       icon: Share2,
     },
     {
-      name: "Bills & Invoices",
-      to: "/bills",
+      name: "Unit Allocation",
+      to: "/unit",
       icon: Receipt,
     },
+    // {
+    //   name: "Report",
+    //   icon: Summary,
+    //   children: [
+    //     {
+    //       name: "Report Summary",
+    //       path: "/report",
+    //     },
+    //     {
+    //       name: "Location Summary",
+    //       path: "/report/location-summary",
+    //     },
+    //   ],
+    // },
+
     {
-      name: "Category",
-      to: "/category",
-      icon: ListSortDescending,
+      name: "Report",
+      icon: Summary,
+      children: [
+        {
+          name: "Report Summary",
+          to: "/report",
+        },
+        {
+          name: "Location Summary",
+          to: "/reports/location-summary",
+        },
+      ],
     },
-    {
-      name: "Employees",
-      to: "/Employee",
-      icon: IdCardLanyard,
-    },
+
     {
       name: "Maintenance",
       to: "/maintenance",
@@ -62,7 +124,7 @@ export const Sidebar = () => {
   fixed top-0 left-0
   w-56
   h-screen
-  overflow-y-hidden
+  overflow-y-auto
   bg-slate-900
   border-r border-slate-800
   text-white
@@ -132,6 +194,76 @@ export const Sidebar = () => {
         {links.map((link) => {
           const Icon = link.icon;
 
+          // Agar Purchase transaction dropdown item hai
+          if (link.children) {
+            return (
+              <div key={link.name} className="space-y-1">
+                <button
+                  type="button"
+                  onClick={() => setPurchaseOpen(!purchaseOpen)}
+                  className="
+                    w-full
+                    flex
+                    items-center
+                    justify-between
+                    gap-2.5
+                    rounded-lg
+                    px-2.5
+                    py-2.5
+                    text-xs
+                    font-medium
+                    transition-colors
+                    text-slate-400
+                    hover:bg-slate-800
+                    hover:text-slate-200
+                  "
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Icon className="w-4 h-4 shrink-0" />
+                    <span className="truncate">{link.name}</span>
+                  </div>
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                      purchaseOpen ? "rotate-180 text-sky-400" : ""
+                    }`}
+                  />
+                </button>
+
+                {/* Dropdown ke links */}
+                {purchaseOpen && (
+                  <div className="pl-6 space-y-1">
+                    {link.children.map((child) => (
+                      <NavLink
+                        key={child.to}
+                        to={child.to}
+                        className={({ isActive }) =>
+                          `
+                          flex
+                          items-center
+                          rounded-lg
+                          px-2.5
+                          py-2
+                          text-[11px]
+                          font-medium
+                          transition-colors
+                          ${
+                            isActive
+                              ? "bg-sky-600 text-white shadow-sm"
+                              : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                          }
+                          `
+                        }
+                      >
+                        <span className="truncate">{child.name}</span>
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          }
+
+          // Baaki regular single links
           return (
             <NavLink
               key={link.to}
@@ -156,7 +288,6 @@ export const Sidebar = () => {
               }
             >
               <Icon className="w-4 h-4 shrink-0" />
-
               <span className="truncate">{link.name}</span>
             </NavLink>
           );
@@ -166,7 +297,6 @@ export const Sidebar = () => {
       {/* ================= USER SECTION ================= */}
       <div className="p-3 border-t border-slate-800">
         <div className="flex items-center gap-2.5 px-2 mb-3">
-          {/* Avatar */}
           <div
             className="
               w-9 h-9
@@ -182,7 +312,6 @@ export const Sidebar = () => {
             {user?.name ? user.name[0] : "U"}
           </div>
 
-          {/* User Details */}
           <div className="overflow-hidden min-w-0">
             <p
               className="

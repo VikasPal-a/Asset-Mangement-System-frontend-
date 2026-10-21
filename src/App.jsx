@@ -6,7 +6,7 @@ import { AppRoutes } from "./routes/AppRoutes";
 export function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/asset_management">
         <AppRoutes />
       </BrowserRouter>
     </AuthProvider>

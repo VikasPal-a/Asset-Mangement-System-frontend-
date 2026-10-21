@@ -24,11 +24,19 @@ export const Allocations = () => {
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [returnTarget, setReturnTarget] = useState(null);
 
-  // Available assets filter
-  const availableAssets = assets.filter((a) => {
-    const assetStatus = a.status || a.Status;
+  // // Available assets filter
+  // const InStockAssets = assets.filter((a) => {
+  //   const assetStatus = String(a.status ?? a.Status ?? "")
+  //     .trim()
+  //     .toLowerCase();
 
-    return assetStatus && assetStatus.toLowerCase() === "available";
+  //   return assetStatus === "InStock";
+  // });
+
+  // Direct check bina toLowerCase ke
+  const InStockAssets = (assets || []).filter((a) => {
+    const assetStatus = (a.Status ?? a.status ?? "").trim();
+    return assetStatus === "InStock";
   });
 
   // Allocation filters
@@ -79,16 +87,13 @@ export const Allocations = () => {
     } catch (error) {
       console.error("Return failed:", error);
 
-      alert(
-        error.response?.data?.message ||
-          "Return fail ho gaya, console check karo.",
-      );
+      alert(error.response?.data?.message || "Return fail check the console");
     }
   };
 
   return (
     <div className="min-h-screen bg-slate-50 p-3 sm:p-5">
-      <div className="mx-auto w-full max-w-7xl space-y-4">
+      <div className="mx-auto w-full max-w-7xl ">
         {/* HEADER */}
         <div className="-mt-8 sm:-mt-10 flex items-center justify-between flex-wrap gap-3">
           <div className="flex items-center gap-2">
@@ -146,7 +151,7 @@ export const Allocations = () => {
         <AllocationModal
           isOpen={isAssignModalOpen}
           onClose={() => setIsAssignModalOpen(false)}
-          availableAssets={availableAssets}
+          InStockAssets={InStockAssets}
           onSubmit={(data) => {
             assignAsset(data);
             refetchAssets();

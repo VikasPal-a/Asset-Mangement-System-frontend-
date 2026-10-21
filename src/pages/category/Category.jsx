@@ -12,8 +12,10 @@ import { Button } from "../../components/common/Button";
 import { SearchBar } from "../../components/common/SearchBar";
 import { Dropdown } from "../../components/common/Dropdown";
 import { Pagination } from "../../components/common/Pagination";
+import { useCategories } from "../../hooks/useCategories";
 
 function Category() {
+  const { handleUpdateType, handleDeleteType } = useCategories();
   const [categoryName, setCategoryName] = useState("");
   const [categories, setCategories] = useState([]);
 
@@ -34,6 +36,9 @@ function Category() {
 
   const [formError, setFormError] = useState("");
   const [toast, setToast] = useState("");
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   // =========================
   // PAGINATION
@@ -218,11 +223,11 @@ function Category() {
 
   const startEdit = (row) => {
     setEditingId(row.id);
-    setEditName(row.name);
-    setEditCategory(row.categoryId);
+    setEditName(row.name || "");
+    setEditCategory(String(row.categoryId ?? ""));
   };
 
-  const saveEdit = (id) => {
+  const saveEdit = async (id) => {
     if (!editName.trim()) {
       showToast("Sub Category Name is required.");
       return;
@@ -233,40 +238,53 @@ function Category() {
       return;
     }
 
-    setRows((prev) =>
-      prev.map((row) =>
-        row.id === id
-          ? {
-              ...row,
-              name: editName.trim(),
-              categoryId: editCategory,
-              category:
-                categories.find(
-                  (category) =>
-                    String(category.categoryId) === String(editCategory),
-                )?.categoryName || "",
-            }
-          : row,
-      ),
-    );
+    try {
+      await handleUpdateType(id, {
+        TypeName: editName.trim(),
+        CategoryID: Number(editCategory),
+      });
 
-    setEditingId(null);
-    setEditName("");
-    setEditCategory("");
+      await loadTypes();
 
-    showToast("Sub Category updated.");
+      setEditingId(null);
+      setEditName("");
+      setEditCategory("");
+
+      showToast("Sub Category updated.");
+    } catch (err) {
+      console.error("Update Error:", err);
+
+      showToast(
+        err.response?.data?.message || "Unable to update Sub Category.",
+      );
+    }
   };
 
   // =========================
   // DELETE
   // =========================
-
-  const deleteRow = (id) => {
-    setRows((prev) => prev.filter((row) => row.id !== id));
-
-    showToast("Sub Category deleted.");
+  const deleteRow = async (id) => {
+    setDeleteId(id);
+    setShowDeleteModal(true);
   };
 
+  const confirmDelete = async () => {
+    try {
+      await handleDeleteType(deleteId);
+      await loadTypes();
+
+      setShowDeleteModal(false);
+      setDeleteId(null);
+
+      showToast("Sub Category deleted.");
+    } catch (err) {
+      console.error("Delete Error:", err);
+
+      showToast(
+        err.response?.data?.message || "Unable to delete Sub Category.",
+      );
+    }
+  };
   // =========================
   // UI
   // =========================
@@ -354,6 +372,19 @@ function Category() {
 
           <form onSubmit={handleSubmit}>
             <div className="flex items-end gap-2">
+              <select
+                value={formCategory}
+                onChange={(e) => setFormCategory(e.target.value)}
+                className="h-8 w-36 rounded-md border border-slate-300 bg-white px-2 text-[11px] outline-none focus:border-green-600"
+              >
+                <option value="">Select Category</option>
+
+                {categories.map((category) => (
+                  <option key={category.categoryId} value={category.categoryId}>
+                    {category.categoryName}
+                  </option>
+                ))}
+              </select>
               {/* SUB CATEGORY NAME */}
 
               <div className="flex-1">
@@ -383,23 +414,6 @@ function Category() {
                   onChange={setFormCategory}
                 />
               </div> */}
-
-              <select
-                value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
-                className="h-8 w-36 rounded-md border border-slate-300 bg-white px-2 text-[11px] outline-none focus:border-green-600"
-              >
-                <option value="All">All Categories</option>
-
-                {categories.map((category) => (
-                  <option
-                    key={category.categoryId}
-                    value={category.categoryName}
-                  >
-                    {category.categoryName}
-                  </option>
-                ))}
-              </select>
 
               {/* ADD */}
 
@@ -583,6 +597,41 @@ function Category() {
           onPageChange={setCurrentPage}
         />
       </div>
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-sm rounded-xl bg-white p-5 shadow-xl">
+            <h2 className="text-base font-bold text-slate-800">
+              Delete Sub Category?
+            </h2>
+
+            <p className="mt-2 text-sm text-slate-600">
+              Are you sure you want to delete this Sub Category?
+            </p>
+
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteId(null);
+                }}
+                className="rounded-md border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={confirmDelete}
+                className="rounded-md bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* TOAST */}
 

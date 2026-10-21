@@ -5,13 +5,17 @@ import { AllocationForm } from "../../forms/AllocationForm";
 export const AllocationModal = ({
   isOpen,
   onClose,
-  availableAssets,
+  InStockAssets = [],
+  employees = [],
+  loadingEmployees = false,
   onSubmit,
 }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Assign Asset to Staff">
       <AllocationForm
-        availableAssets={availableAssets}
+        InStockAssets={InStockAssets}
+        employees={employees}
+        loadingEmployees={loadingEmployees}
         onSubmit={(values) => {
           onSubmit(values);
           onClose();

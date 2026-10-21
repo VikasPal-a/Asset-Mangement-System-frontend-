@@ -31,12 +31,12 @@ export const MobileSidebar = ({ isOpen, onClose }) => {
               Unios AMS
             </span>
           </div>
-          <button
+          {/* <button
             onClick={onClose}
             className="text-slate-400 hover:text-white p-1"
           >
             <X className="w-5 h-5" />
-          </button>
+          </button> */}
         </div>
 
         <nav className="flex-1 space-y-1.5 px-3 py-6">

@@ -15,11 +15,14 @@ export const allocationService = {
   // 2. Allocate New Asset
   async createAllocation(data) {
     try {
+      console.log("CREATE ALLOCATION PAYLOAD:", data);
+
       const response = await apiUrl.post("/allocations/assign", data);
 
       return response.data;
     } catch (error) {
-      console.error("Error creating allocation:", error);
+      console.error("Allocation payload:", data);
+      console.error("Backend error:", error.response?.data);
       throw error;
     }
   },

@@ -36,3 +36,25 @@ export const addType = async (typeName, categoryId) => {
 
   return response.data;
 };
+
+// PUT - Update type
+export const updateType = async (id, typeData) => {
+  const response = await apiUrl.put(`/types/${id}`, typeData);
+  return response.data;
+};
+
+// DELETE - Delete type
+export const deleteType = async (id) => {
+  const response = await apiUrl.delete(`/types/${id}`);
+  return response.data;
+};
+// categoryService.js ke bilkul aakhiri me yeh line paste kar do:
+export const categoryService = {
+  getCategories,
+  addCategory,
+  getTypes,
+  addType,
+  updateType,
+  deleteType,
+};
+export default categoryService;

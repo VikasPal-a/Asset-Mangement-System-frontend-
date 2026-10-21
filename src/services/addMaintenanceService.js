@@ -7,12 +7,23 @@ export const addMaintenanceService = {
     return response.data;
   },
 
-  // POST: maintenance add (File ke sath)
+  // POST: Add maintenance with receipt file
+  // addMaintenance: async (formData) => {
+  //   const response = await apiUrl.post("/maintenance", formData);
+
+  //   return response.data;
+  // },
+
   addMaintenance: async (formData) => {
-    // 🚨 Headers me multipart/form-data lagaya hai for File Upload
-    const response = await apiUrl.post("/maintenance", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const response = await apiUrl.post("/maintenance", formData);
+
+    return response.data;
+  },
+
+  // PUT: Update maintenance (File ke sath)
+  updateMaintenance: async (maintenanceId, payload) => {
+    const response = await apiUrl.put(`/maintenance/${maintenanceId}`, payload);
+
     return response.data;
   },
 };

@@ -4,10 +4,10 @@ import { ASSET_STATUS } from "../../utils/constants";
 
 export const AssetStatusBadge = ({ status }) => {
   switch (status) {
-    case ASSET_STATUS.AVAILABLE:
+    case ASSET_STATUS.InStock:
       return (
         <Badge variant="success" className="text-[10px]">
-          Available
+          InStock
         </Badge>
       );
 

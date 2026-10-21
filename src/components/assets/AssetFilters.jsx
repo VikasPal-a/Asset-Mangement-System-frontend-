@@ -18,12 +18,12 @@ export const AssetFilters = ({
 
   const statusOptions = [
     {
-      label: "All Statuses",
+      label: "All Status",
       value: "",
     },
     {
-      label: ASSET_STATUS?.AVAILABLE || "AVAILABLE",
-      value: ASSET_STATUS?.AVAILABLE || "AVAILABLE",
+      label: ASSET_STATUS?.INSTOCK || "InStock",
+      value: ASSET_STATUS?.INSTOCK || "InStock",
     },
     {
       label: ASSET_STATUS?.ASSIGNED || "ASSIGNED",
@@ -39,18 +39,18 @@ export const AssetFilters = ({
   // CATEGORY OPTIONS
   // ==============================
 
-  const categoryOptions = [
-    {
-      label: "All Categories",
-      value: "",
-    },
+  // const categoryOptions = [
+  //   {
+  //     label: "All Categories",
+  //     value: "",
+  //   },
 
-    ...categories.map((category) => ({
-      key: category.categoryId ?? category.CategoryID,
-      label: category.categoryName ?? category.CategoryName,
-      value: String(category.categoryId ?? category.CategoryID),
-    })),
-  ];
+  //   ...categories.map((category) => ({
+  //     key: category.categoryId ?? category.CategoryID,
+  //     label: category.categoryName ?? category.CategoryName,
+  //     value: String(category.categoryId ?? category.CategoryID),
+  //   })),
+
   // ==============================
   // UI
   // ==============================
@@ -80,7 +80,7 @@ export const AssetFilters = ({
         }}
       /> */}
 
-      <Select
+      {/* <Select
         placeholder="Filter by Category"
         options={categoryOptions}
         value={categoryFilter}
@@ -88,7 +88,7 @@ export const AssetFilters = ({
           console.log("Selected Category ID:", categoryId);
           onCategoryChange(categoryId);
         }}
-      />
+      /> */}
 
       {/* STATUS */}
 
